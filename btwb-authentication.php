@@ -48,7 +48,7 @@ if(!defined('BTWB_LOCAL_PAGE_SCOPES')){
 
 /* Expected key name carrying the JWT token souced from BTWB API */
 if(!defined('BTWB_JWT_TOKEN')){
-    define('BTWB_JWT_TOKEN', 'jwt_token');
+    define('BTWB_JWT_TOKEN', 'jwt');
 }
 
 require_once 'inc/BTWB_Init.php';
