@@ -340,8 +340,7 @@ if (!class_exists('BTWB_Class')) {
          * @return string URL
          */
         public static function getThisUrl() {
-
-            $urlscheme = $_SERVER['REQUEST_SCHEME'];
+            $urlscheme = $_SERVER['REQUEST_SCHEME'] ? $_SERVER['REQUEST_SCHEME'] : 'http';
             $domain = $_SERVER['HTTP_HOST'];
             // find out the path to the current file:
             $path = $_SERVER['REQUEST_URI'];
