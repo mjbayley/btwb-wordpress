@@ -1,0 +1,48 @@
+.btwb-notice {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btwb-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.btwb-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.btwb-settings-form {
+    border: 1px solid #ccc;
+    padding-left: 15px;
+    padding-bottom: 15px;
+}
+
+.btwb-textarea{
+    padding: 10px 10px 1px !important;
+    resize: none;
+}
+
+.btwb-not-visible{
+    display: none;
+}
+
+#btwb_scopes{
+    margin-left: 28px;
+}
+
+.btwb-radio{
+    margin-bottom: 5px;
+    display: list-item;
+    list-style-type: none;
+}
+
+.btwb-red-notice{
+    color: #a94442; 
+    font-weight: bold;
+}
