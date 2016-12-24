@@ -3,6 +3,7 @@
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 4px;
+    margin-top: 15px;
 }
 
 .btwb-success {
@@ -17,10 +18,11 @@
     border-color: #ebccd1;
 }
 
-.btwb-settings-form {
+.btwb-settings-form, .btwb-widgets-settings {
     border: 1px solid #ccc;
     padding-left: 15px;
     padding-bottom: 15px;
+    margin-top: 10px;
 }
 
 .btwb-textarea{
@@ -43,6 +45,30 @@
 }
 
 .btwb-red-notice{
-    color: #a94442; 
+    color: #a94442;
     font-weight: bold;
 }
+.btwb-margin-top-10{
+  margin-top: 10px;
+}
+.widgets-form hr{
+  border-color: #CCCCCC;
+}
+
+.btwb-margin-top-25{
+  margin-top: 25px !important;
+}
+
+.widgets-form th{
+  padding-top: 5px !important;
+}
+
+.widgets-form td{
+  padding-top: 0px !important;
+}
+
+.widgets-form select{
+  width: 100px;
+}
+
+

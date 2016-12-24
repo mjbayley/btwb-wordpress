@@ -48,6 +48,7 @@ if (!class_exists('BTWB_Class')) {
          */
         public static function settingsForm() {
             $btwb_settings_exists = get_option(BTWB_SETTINGS_OPTION, FALSE);
+            $required_params = implode(', ', unserialize(BTWB_EXPECTED_JSON_PARAMS));
             $editButton = ($btwb_settings_exists) ? '&nbsp;&nbsp;<input type="button" id="edit_btwb_json" class="button" value="Edit Settings">' : '';
             $form_string = '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" novalidate="novalidate" class="btwb-settings-form">
                     <table class="form-table">
@@ -57,7 +58,7 @@ if (!class_exists('BTWB_Class')) {
                                 <td>
                                     <input type="hidden" name="action" value="btwb_settings">
                                     <textarea ' . (($btwb_settings_exists) ? 'readonly' : '' ) . ' name="btwb_json" rows="8" cols="50"  id="btwb_json" class="large-text code btwb-textarea" rows="3">' . $btwb_settings_exists . '</textarea>
-                                    <p class="description" id="btwb_json-description">The JSON must contain the required configuration values at keys: endpoint_url, jwt_secret and scopes</p>
+                                    <p class="description" id="btwb_json-description">You can find your "BTWB JSON" code under "WordPress Integration" in the btwb.com admin dropdown menu. The JSON must contain the required configuration values at keys: ' . $required_params . '</p>
                                 </td>
                             </tr>
                             <tr>
@@ -68,7 +69,7 @@ if (!class_exists('BTWB_Class')) {
                             </tr>
                         </tbody>
                     </table>
-                    
+
                 </form>';
             return $form_string;
         }
@@ -101,7 +102,8 @@ if (!class_exists('BTWB_Class')) {
                 $noticeMessage = !self::isJson($jsonParam) ? 'The JSON string is Invalid' : 'One or more required key(s) missing.';
                 $_SESSION['btwb']['settingsPage']['notice'] = array('status' => 'error', 'message' => $noticeMessage);
             }
-            wp_redirect(wp_get_referer()); exit;
+            wp_redirect(wp_get_referer());
+            exit;
         }
 
         /**
@@ -174,8 +176,8 @@ if (!class_exists('BTWB_Class')) {
 
             if (!empty($btwbSettings)) {
                 $thisPostId = $post->ID;
-                $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_SETTINGS_VISIBILITY, true);
-                $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PAGE_SCOPES, true);
+                $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
+                $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, true);
 
                 $scopesVisibilityClass = !empty($thisPostMetaVisibility) ? '' : 'btwb-not-visible';
                 $scopesVisibilityRadio = !empty($thisPostMetaVisibility) ? 'checked' : '';
@@ -200,24 +202,26 @@ if (!class_exists('BTWB_Class')) {
          * Saves / Updates the post specific BTWB Access settings
          */
         public static function btwbAccessSettingsSave() {
-            $thisPostId = $_POST['post_ID'];
-            $thisPostBtwbVisibility = $_POST['btwb_visibility'];
-            $thisPostBtwbVisibilityScopes = $_POST['btwb_scopes'];
+            if (isset($_POST['post_ID'])) {
+                $thisPostId = $_POST['post_ID'];
+                $thisPostBtwbVisibility = $_POST['btwb_visibility'];
+                $thisPostBtwbVisibilityScopes = $_POST['btwb_scopes'];
 
-            /* Get existing visibility settings for post, save new if not found and update the existing if found */
-            $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_SETTINGS_VISIBILITY, true);
-            if (!empty($thisPostMetaVisibility)) {
-                update_post_meta($thisPostId, BTWB_SETTINGS_VISIBILITY, $thisPostBtwbVisibility);
-            } else {
-                add_post_meta($thisPostId, BTWB_SETTINGS_VISIBILITY, $thisPostBtwbVisibility);
-            }
+                /* Get existing visibility settings for post, save new if not found and update the existing if found */
+                $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
+                if (!empty($thisPostMetaVisibility)) {
+                    update_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, $thisPostBtwbVisibility);
+                } else {
+                    add_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, $thisPostBtwbVisibility);
+                }
 
-            /* Get existing allowed scopes for post, save new if not found and update the existing if found */
-            $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PAGE_SCOPES, true);
-            if (!empty($thisPostMetaVisibility)) {
-                update_post_meta($thisPostId, BTWB_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
-            } else {
-                add_post_meta($thisPostId, BTWB_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
+                /* Get existing allowed scopes for post, save new if not found and update the existing if found */
+                $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, true);
+                if (!empty($thisPostMetaVisibility)) {
+                    update_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
+                } else {
+                    add_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
+                }
             }
         }
 
@@ -233,7 +237,7 @@ if (!class_exists('BTWB_Class')) {
                 $btwbSettings = json_decode($btwbSettings);
             }
             $thisPostId = $post->ID;
-            $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_SETTINGS_VISIBILITY, true);
+            $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
 
             /* Check if the 'jwt_token' is not observed in Query String */
             if (!isset($_GET[BTWB_JWT_TOKEN])) {
@@ -242,7 +246,7 @@ if (!class_exists('BTWB_Class')) {
                     /* No scopes stored in cookies are found */
                     if (!self::readLocalScopes()) {
                         if (!empty($btwbSettings)) {
-                            wp_redirect($btwbSettings->endpoint_url . '?to=' . self::getThisUrl());
+                            wp_redirect($btwbSettings->jwt_endpoint . '?to=' . self::getThisUrl());
                         }
                         exit;
                         /* Scopes are found locally */
@@ -256,14 +260,14 @@ if (!class_exists('BTWB_Class')) {
                     $btwbJwtToken = $_GET[BTWB_JWT_TOKEN];
 
                     /* Store/Update the locally stored scopes in cookies */
-                    setcookie(BTWB_LOCAL_PAGE_SCOPES, $btwbJwtToken, 0, '/');
-                    
+                    setcookie(BTWB_COOKIE_VISITOR_JWT, $btwbJwtToken);
+
                     /* Get BTWB Admin Settings */
                     $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
 
                     /* Decode the JWT Token recieved through BTWB */
                     $dataOutOfJwt = JWT::decode($btwbJwtToken, $btwbSettings->jwt_secret, array('HS256'));
-                    
+
 
                     /* Check if local scopes are available */
                     if (empty($dataOutOfJwt)) {
@@ -287,7 +291,7 @@ if (!class_exists('BTWB_Class')) {
             $result = false;
 
             /* Get Post's scopes from options table */
-            $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PAGE_SCOPES, true);
+            $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, true);
             $thisPostMetaScopes = !empty($thisPostMetaScopes) ? $thisPostMetaScopes : array();
 
             /* Reading the scopes from cookies */
@@ -320,17 +324,18 @@ if (!class_exists('BTWB_Class')) {
         public static function readLocalScopes($btwbScopes = null) {
             $result = false;
             $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
-            if(empty($btwbScopes)){
+            if (empty($btwbScopes)) {
                 try {
-                    if (isset($_COOKIE[BTWB_LOCAL_PAGE_SCOPES])) {
-                        $result = $_COOKIE[BTWB_LOCAL_PAGE_SCOPES];
+                    if (isset($_COOKIE[BTWB_COOKIE_VISITOR_JWT])) {
+                        $result = $_COOKIE[BTWB_COOKIE_VISITOR_JWT];
                         if (!empty($result)) {
                             $result = JWT::decode($result, $btwbSettings->jwt_secret, array('HS256'));
                         }
                     }
                 } catch (Exception $e) {
-                    wp_redirect($btwbSettings->endpoint_url . '?to=' . self::getThisUrl()); exit;
-                } 
+                    wp_redirect($btwbSettings->jwt_endpoint . '?to=' . self::getThisUrl());
+                    exit;
+                }
             }
             return $result;
         }
@@ -349,6 +354,17 @@ if (!class_exists('BTWB_Class')) {
             // put it all together:
             $url = $urlscheme . "://" . $domain . $path;
             return $url;
+        }
+
+        public static function widgetDefaultSettingsSelect($nameKey, $savedValue, $numberOfOptions = 20) {
+            echo '<select name="btwb_widgets_default_settings[' . $nameKey . ']">';
+			$counter = in_array($nameKey, array('btwb_wod_leaderboard_length', 'btwb_wod_activity_length')) ? 0 : 1;
+            while ( $counter <= $numberOfOptions ) {
+                $selectedOption = (!empty($savedValue) && ($savedValue == $counter)) ? 'selected' : '';
+                echo "<option {$selectedOption}>{$counter}</option>";
+				$counter++;
+            }
+            echo '</select>';
         }
 
     }
