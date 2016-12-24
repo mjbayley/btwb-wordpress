@@ -260,7 +260,7 @@ if (!class_exists('BTWB_Class')) {
                     $btwbJwtToken = $_GET[BTWB_JWT_TOKEN];
 
                     /* Store/Update the locally stored scopes in cookies */
-                    setcookie(BTWB_COOKIE_VISITOR_JWT, $btwbJwtToken);
+                    setcookie(BTWB_COOKIE_VISITOR_JWT, $btwbJwtToken, 0, '/');
 
                     /* Get BTWB Admin Settings */
                     $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
