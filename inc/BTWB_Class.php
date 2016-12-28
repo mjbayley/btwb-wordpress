@@ -236,7 +236,12 @@ if (!class_exists('BTWB_Class')) {
             if (!empty($btwbSettings)) {
                 $btwbSettings = json_decode($btwbSettings);
             }
-            $thisPostId = $post->ID;
+            
+            $thisPostId = null;
+            if(is_object($post)){
+                $thisPostId = $post->ID;
+            }
+            
             $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
 
             /* Check if the 'jwt_token' is not observed in Query String */

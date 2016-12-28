@@ -1,0 +1,20 @@
+<form accept-charset="UTF-8" action="{{btwb_program_action_url}}" method="post">
+  <input type="hidden" name="success_url" value="{{btwb_program_success_url}}">
+  <script class="stripe-button"
+          data-billing-address="false"
+          data-allow-remember-me="false"
+          data-description="{{btwb_program_description}}"
+          data-image="https://s3.amazonaws.com/assets.beyondthewhiteboard.com/images/btwb-marketplace.png"
+          data-key="{{btwb_program_public_key}}"
+          data-label="{{btwb_program_button_label}}"
+          data-amount="{{btwb_program_amount}}"
+          data-allow-remember-me="false"
+          data-locale="auto"
+          data-name="{{btwb_program_name}}"
+          data-panel-label="{{btwb_program_panel_label}} - {{amount}}"
+          data-shipping-address="false"
+          data-zip-code="false"
+          data-currency="{{btwb_program_currency}}"
+          src="https://checkout.stripe.com/checkout.js">
+  </script>
+</form>

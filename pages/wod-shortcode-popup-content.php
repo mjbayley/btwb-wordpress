@@ -22,7 +22,7 @@
 				<td style="border: none; padding: 3px 0;"><label>Date</label></td>
 				<td colspan="2" style="border: none; padding: 3px 0;">
 					<input class="form-control datepicker" type="text" id="wod_date">
-					<p class="small">Leave Blank to always show the current day</p>	
+					<p class="small">Leave Blank to always show the current day</p>
 				</td>
 			</tr>
 			<tr>
@@ -48,7 +48,7 @@
 					<select class="form-control" id="wod_activity_length">
 						<option value="">Default Length</option>
 						<option value="0">Hide Activity</option>
-						<?php 
+						<?php
 							for($activityLenghtCounter = 1; $activityLenghtCounter <= 30; $activityLenghtCounter++){
 								echo "<option value=\"{$activityLenghtCounter}\">{$activityLenghtCounter}</option>";
 							}
@@ -56,7 +56,7 @@
 					</select>
 				</td>
 			</tr>
-			
+
 			</tr>
 			<tr>
 				<td style="border: none; padding: 3px 0;"><label>Leaderboard Length</label></td>
@@ -64,7 +64,7 @@
 					<select class="form-control" id="wod_leaderboard_length">
 						<option value="">Default Length</option>
 						<option value="0">Hide Leaderboard</option>
-						<?php 
+						<?php
 							for($leaderboardLenghtCounter = 1; $leaderboardLenghtCounter <= 20; $leaderboardLenghtCounter++){
 								echo "<option value=\"{$leaderboardLenghtCounter}\">{$leaderboardLenghtCounter}</option>";
 							}
@@ -77,7 +77,7 @@
 				<td colspan="2" style="border: none; padding: 3px 0;">
 					<select class="form-control" id="wod_days">
 						<option value="">No Previous Days</option>
-						<?php 
+						<?php
 							for($dayLenghtCounter = 1; $dayLenghtCounter <= 20; $dayLenghtCounter++){
 								echo "<option value=\"{$dayLenghtCounter}\">{$dayLenghtCounter}</option>";
 							}

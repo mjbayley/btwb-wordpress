@@ -24,7 +24,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
                 return;
             }
         }
-        
+
         /**
          * Appends the JS file dedicated to shortcode buttons
          * @param array Existing array of plugin JS
@@ -41,7 +41,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
          * @return array The result array of toolbar buttons after being appended
          */
         public static function appendBtnsToToolbar($buttons) {
-            array_push( $buttons, '|', 'btwbButtonWod', 'btwbButtonActivity', 'btwbButtonLeaderboard');
+            array_push($buttons, '|', 'btwbButtonWod', 'btwbButtonActivity', 'btwbButtonLeaderboard', 'btwbButtonStripe');
             return $buttons;
         }
 
@@ -66,7 +66,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
                 echo '<!--------------BTWB WIDGETS RESOURCES END---------------------->' . PHP_EOL;
             }
         }
-        
+
         /**
          * Deals with the logic behind save/update of the default settings for widgets
          */
@@ -133,7 +133,47 @@ if (!class_exists('BTWB_Widgets_Class')) {
             $attributesString = self::generateWidgetAttributes($attributes);
             return ('<div class="' . BTWB_WIDGET_CLASS_NAME . '" data-type="leaders" ' . $attributesString . '></div>');
         }
-        
+
+        /**
+         * Deals with the definition of [stripecheckout] shortcode
+         * @param array $attributes The attributes observed through shortcode
+         * @return string The HTML string generated based upon observed
+         */
+        public static function stripeShortcode($attributes = array()) {
+            $stripeTemplate = plugins_url().'/btwb-wordpress/pages/stripe-widget-template.html';
+            $stripeTemplateContent = file_get_contents($stripeTemplate);
+
+            $selectedProgram = !empty($attributes['program_name']) ? $attributes['program_name'] : '';
+            $panelLabel = !empty($attributes['panel_label']) ? $attributes['panel_label'] : 'Buy via BTWB';
+            $buttonLabel = !empty($attributes['button_label']) ? $attributes['button_label'] : 'Sign Up';
+            $successUrl = !empty($attributes['success_url']) ? $attributes['success_url'] : '';
+
+            $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
+            if($btwbSettings !== 0){
+              $btwbSettings = json_decode($btwbSettings);
+              $stripeTemplateContent = str_replace('{{btwb_program_public_key}}', $btwbSettings->stripe->public_api_key ,$stripeTemplateContent);
+
+              /* Program Specific Contact Programs */
+              $stripeTemplateContent = str_replace('{{btwb_program_public_key}}', $btwbSettings->stripe->public_api_key ,$stripeTemplateContent);
+
+              $selectedProgramObject = $btwbSettings->coaching_program_plans->{$selectedProgram};
+              $programDescription = !empty($attributes['data_description']) ? $attributes['data_description'] : $selectedProgramObject->description;
+              $programName = !empty($attributes['data_name']) ? $attributes['data_name'] : $selectedProgramObject->name;
+
+              $stripeTemplateContent = str_replace('{{btwb_program_action_url}}', $selectedProgramObject->url ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_success_url}}', $successUrl ,$stripeTemplateContent);
+
+              $stripeTemplateContent = str_replace('{{btwb_program_description}}', $programDescription ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_button_label}}', $buttonLabel ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_amount}}', $selectedProgramObject->amount ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_name}}', $programName ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_panel_label}}', $panelLabel ,$stripeTemplateContent);
+              $stripeTemplateContent = str_replace('{{btwb_program_currency}}', $selectedProgramObject->currency ,$stripeTemplateContent);
+            }
+
+            return ($stripeTemplateContent);
+        }
+
         /**
          * Utility function to create the data attributes string
          * @param array Array containing the keys and values for data attributes
@@ -149,7 +189,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
 
             return implode(' ', $result);
         }
-        
+
         /**
          * Utility function which checks if the supplied attributes have values set, otherwise saturate them with default settings
          * @param array $attributes The array of attributes recieved from shortcode
@@ -159,7 +199,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
         private static function saturateAttributes($attributes, $type) {
             $result = false;
             $attributeRelations = array();
-            
+
             /* Deciding what default key setting belongs to shortcode setting */
             switch ($type) {
                 case 'wod':
@@ -202,7 +242,6 @@ if (!class_exists('BTWB_Widgets_Class')) {
             }
             return $result;
         }
-
     }
 
 }

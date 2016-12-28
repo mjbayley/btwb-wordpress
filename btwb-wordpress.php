@@ -23,7 +23,7 @@ if(!defined('BTWB_PATH')){
 
 /* Expected parameters in BTWB Admin settings */
 if(!defined('BTWB_EXPECTED_JSON_PARAMS')){
-    define('BTWB_EXPECTED_JSON_PARAMS', serialize(array('jwt_endpoint', 'jwt_secret', 'scopes', 'webwidgets_api_key')));
+    define('BTWB_EXPECTED_JSON_PARAMS', serialize(array('jwt_endpoint', 'jwt_secret', 'scopes', 'webwidgets_api_key', 'stripe')));
 }
 
 /* BTWB admin settings are stored with this option name */

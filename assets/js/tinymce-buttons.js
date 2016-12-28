@@ -1,5 +1,5 @@
 (function () {
-    
+
     function saturateConsecutiveValueJSON(upto, emptyCase) {
         var result = [{"text": "No " + emptyCase, "value": ""}];
         for (i = 1; i <= upto; i++) {
@@ -7,7 +7,7 @@
         }
         return result;
     }
-    
+
     var wod_activity_length_values = saturateConsecutiveValueJSON(30, "Activity Length");
 
     function addShortCode(shortcode, attrValue) {
@@ -22,6 +22,10 @@
 
     function getWodListBoxValue(buttonId) {
         return jQuery.trim(jQuery('#btwbInsertShortcodeWod-body iframe').contents().find('#' + buttonId).val());
+    }
+
+    function getStripeControlValue(buttonId) {
+        return jQuery.trim(jQuery('#btwbInsertShortcodeStripeInsert-body iframe').contents().find('#' + buttonId).val());
     }
 
     function getCheckBoxesValue(className) {
@@ -66,6 +70,16 @@
                         title: 'Insert Leaderboard',
                         cmd: 'btwbInsertShortcodeLeaderboard',
                         image: btwbUrl + '/assets/img/button_leaderboard.png'
+                    });
+
+            /* Register buttons to trigger the popup for Leaderboard shortcode */
+            btwbWordpressEditor.addButton(
+                    'btwbButtonStripe',
+                    {
+                        title: 'Insert Stripe Checkout',
+                        cmd: 'btwbInsertShortcodeStripe',
+						classes: "btwbButtonStripe",
+                        image: btwbUrl + '/assets/img/button_stripe.png'
                     });
 
             /* Called when we click the Insert Gistpen button */
@@ -229,6 +243,52 @@
                         }],
                 });
             });
+
+            /* Calls the pop-up modal for Leaderboard */
+            btwbWordpressEditor.addCommand('btwbInsertShortcodeStripe', function () {
+                /* Calls the pop-up modal */
+                btwbWordpressEditor.windowManager.open({
+                    /* Modal settings */
+                    title: 'Settings for BTWB Stripe Checkout',
+                    width: jQuery(window).width() * 0.4,
+                    height: (jQuery(window).height() - 36 - 50) * 0.5,
+                    url: btwbUrl + '/pages/stripe-shortcode-popup-content.php',
+                    inline: 1,
+                    id: 'btwbInsertShortcodeStripeInsert',
+                    buttons: [{
+                            text: 'Add Stripe Shortcode',
+                            id: 'btnAddBtwbInsertShortcodeStripe',
+                            class: 'insert',
+                            onclick: function (e) {
+                                var stripeValues = {};
+                                stripeValues['program_name'] = getStripeControlValue('btwb_stripe_program');
+                                stripeValues['button_label'] = getStripeControlValue('btwb_stripe_button_label');
+                                stripeValues['data_name'] = getStripeControlValue('btwb_stripe_data_name');
+                                stripeValues['data_description'] = getStripeControlValue('btwb_stripe_data_description');
+                                stripeValues['panel_label'] = getStripeControlValue('stripe_data_panel_label');
+                                stripeValues['success_url'] = getStripeControlValue('stripe_data_success_url');
+
+                                var attrValue = '';
+                                jQuery.each(stripeValues, function(thisK, thisV){
+									
+                                  if(jQuery.trim(thisV) != ''){
+                                    attrValue += thisK+'="' + thisV + '" ';
+                                  }
+								  
+                                });
+
+                                addShortCode('stripecheckout ', attrValue);
+                                tinymce.activeEditor.windowManager.close();
+                            },
+                        },
+                        {
+                            text: 'Cancel',
+                            id: 'btnCancelBtwbInsertStripe',
+                            onclick: 'close'
+                        }],
+                });
+            });
+
         }, /* init */
     }); /* tinymce.create */
 

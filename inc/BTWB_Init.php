@@ -57,3 +57,4 @@ add_action('wp_footer', 'BTWB_Widgets_Class::loadRequiredScripts');
 add_shortcode('wod', 'BTWB_Widgets_Class::wodShortcode');
 add_shortcode('activity', 'BTWB_Widgets_Class::activityShortcode');
 add_shortcode('leaderboard', 'BTWB_Widgets_Class::leaderboardShortcode');
+add_shortcode('stripecheckout', 'BTWB_Widgets_Class::stripeShortcode');
