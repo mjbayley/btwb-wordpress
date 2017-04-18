@@ -21,8 +21,11 @@ if (session_status() == PHP_SESSION_NONE) {
     endif;
     ?>
     <?php echo BTWB_Class::settingsForm(); ?>
-    
-    <?php $btwbDefaultSettings = get_option(BTWB_WIDGETS_DEFAULT_SETTINGS, FALSE); ?>
+
+    <?php
+        $btwbDefaultSettings = get_option(BTWB_WIDGETS_DEFAULT_SETTINGS, FALSE);
+        $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
+     ?>
     <!--------------Widget Settings Start---------->
     <br/><h1><?php _e('BTWB Widgets Settings'); ?></h1>
     <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="widgets-form">
@@ -35,15 +38,15 @@ if (session_status() == PHP_SESSION_NONE) {
                     <tr>
                         <th scope="row">Track</th>
                         <td>
-                            <select multiple id="btwb_wod_tracks" name="btwb_widgets_default_settings[btwb_wod_tracks][]" style="width: 100px;padding: 5px; background-color: #f2f2f2;border: 1px solid #ccc;">
+                            <select multiple id="btwb_wod_tracks" name="btwb_widgets_default_settings[btwb_wod_tracks][]" style="width: auto;padding: 5px; background-color: #f2f2f2;border: 1px solid #ccc;">
                                 <?php
-                                $defaultTracks = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-                                foreach ($defaultTracks as $track) {
+                                $defaultTracks = !empty($btwbSettings->tracks) ? $btwbSettings->tracks : array();
+                                foreach ($defaultTracks as $trackId => $track) {
                                     $selected = '';
                                     if (!empty($btwbDefaultSettings['btwb_wod_tracks'])) {
-                                        $selected = in_array($track, $btwbDefaultSettings['btwb_wod_tracks']) ? 'selected' : '';
+                                        $selected = in_array($trackId, $btwbDefaultSettings['btwb_wod_tracks']) ? 'selected' : '';
                                     }
-                                    echo "<option value=\"{$track}\" {$selected}>Track {$track}</option>";
+                                    echo "<option value=\"{$trackId}\" {$selected}>{$track->name}</option>";
                                 }
                                 ?>
                             </select>

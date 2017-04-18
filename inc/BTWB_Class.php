@@ -5,19 +5,22 @@
  *
  * @author AvitInfotech
  */
-if (!defined('ABSPATH'))
-    exit; // Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit;
+} // Exit if accessed directly
 
 require_once BTWB_PATH . '/vendor/autoload.php';
+use \Firebase\JWT\JWT;
 
 if (!class_exists('BTWB_Class')) {
-
-    class BTWB_Class {
+    class BTWB_Class
+    {
 
         /**
          * To load the Settings page when BTWB Menu item is clicked
          */
-        public static function loadPage() {
+        public static function loadPage()
+        {
             $page = $_GET['page'];
             $pagePath = BTWB_PATH . '/pages/' . $page . '.php';
             if (file_exists($pagePath)) {
@@ -31,7 +34,8 @@ if (!class_exists('BTWB_Class')) {
          * Adds the first level menu item in Admin Dashboard
          * @global array $btwb_settings_menu Carries the settings for Menu.
          */
-        public static function createPage() {
+        public static function createPage()
+        {
             global $btwb_settings_menu;
             add_menu_page($btwb_settings_menu['Page_Title'], $btwb_settings_menu['Menu_Title'], $btwb_settings_menu['Capability'], $btwb_settings_menu['Slug'], array('BTWB_Class', 'loadPage'), BTWB_URL . $btwb_settings_menu['Icon']);
 
@@ -43,11 +47,25 @@ if (!class_exists('BTWB_Class')) {
         }
 
         /**
+         * Registers Admin Script and localize a AJAX Object
+         */
+        public static function btwbAdminEnqueueScripts()
+        {
+
+            /** Register AJAX Script for Tinymce JS */
+            wp_enqueue_script('btwb_tinymce_js', BTWB_URL . 'assets/js/tinymce-buttons.js', array('jquery'));
+
+            // in JavaScript, object properties are accessed as ajax_object.ajax_url, ajax_object.we_value
+            wp_localize_script('btwb_tinymce_js', 'btwb_ajax_object', array( 'ajax_url' => admin_url('admin-ajax.php')));
+        }
+
+        /**
          * This will define the HTML of BTWB Admin Settings Page
          * @return string The expected HTML
          */
-        public static function settingsForm() {
-            $btwb_settings_exists = get_option(BTWB_SETTINGS_OPTION, FALSE);
+        public static function settingsForm()
+        {
+            $btwb_settings_exists = get_option(BTWB_SETTINGS_OPTION, false);
             $required_params = implode(', ', unserialize(BTWB_EXPECTED_JSON_PARAMS));
             $editButton = ($btwb_settings_exists) ? '&nbsp;&nbsp;<input type="button" id="edit_btwb_json" class="button" value="Edit Settings">' : '';
             $form_string = '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" novalidate="novalidate" class="btwb-settings-form">
@@ -57,7 +75,7 @@ if (!class_exists('BTWB_Class')) {
                                 <th scope="row"><label for="btwb_json">BTWB JSON</label></th>
                                 <td>
                                     <input type="hidden" name="action" value="btwb_settings">
-                                    <textarea ' . (($btwb_settings_exists) ? 'readonly' : '' ) . ' name="btwb_json" rows="8" cols="50"  id="btwb_json" class="large-text code btwb-textarea" rows="3">' . $btwb_settings_exists . '</textarea>
+                                    <textarea ' . (($btwb_settings_exists) ? 'readonly' : '') . ' name="btwb_json" rows="8" cols="50"  id="btwb_json" class="large-text code btwb-textarea" rows="3">' . $btwb_settings_exists . '</textarea>
                                     <p class="description" id="btwb_json-description">You can find your "BTWB JSON" code under "WordPress Integration" in the btwb.com admin dropdown menu. The JSON must contain the required configuration values at keys: ' . $required_params . '</p>
                                 </td>
                             </tr>
@@ -77,8 +95,8 @@ if (!class_exists('BTWB_Class')) {
         /**
          * Manages the validation of input JSON and save/update of the Admin settings to WP options
          */
-        public static function btwbSettingsPost() {
-
+        public static function btwbSettingsPost()
+        {
             $postContent = $_POST;
             $jsonParam = stripslashes($postContent['btwb_json']);
             $jsonParam = json_encode(json_decode($jsonParam));
@@ -88,7 +106,7 @@ if (!class_exists('BTWB_Class')) {
                 $noticeMessage = '';
 
                 /* Get existing BTWB Admin settings, save new if not found and update the existing if found */
-                $btwb_settings_exists = get_option(BTWB_SETTINGS_OPTION, FALSE);
+                $btwb_settings_exists = get_option(BTWB_SETTINGS_OPTION, false);
                 if (!$btwb_settings_exists) {
                     add_option(BTWB_SETTINGS_OPTION, $jsonParam);
                     $noticeMessage = 'Your configuration was saved sucessfully';
@@ -111,7 +129,8 @@ if (!class_exists('BTWB_Class')) {
          * @param string $string JSON String
          * @return boolean TRUE if JSON is valid and FALSE otherwise
          */
-        public static function isJson($string) {
+        public static function isJson($string)
+        {
             json_decode($string);
             return (json_last_error() == JSON_ERROR_NONE);
         }
@@ -121,7 +140,8 @@ if (!class_exists('BTWB_Class')) {
          * @param string $json JSON String to be validated
          * @return boolean TRUE if Test passes and FALSE otherwise
          */
-        public static function isJsonBtwbValid($json = '') {
+        public static function isJsonBtwbValid($json = '')
+        {
             $result = false;
             $jsonArray = json_decode($json, true);
             $requiredKeys = unserialize(BTWB_EXPECTED_JSON_PARAMS);
@@ -133,7 +153,7 @@ if (!class_exists('BTWB_Class')) {
                 }
             }
             if (count($requiredKeys) == count($filteredArray)) {
-                $result = TRUE;
+                $result = true;
             }
             return $result;
         }
@@ -141,7 +161,8 @@ if (!class_exists('BTWB_Class')) {
         /**
          * Initiates a session through this plugin
          */
-        public static function btwbSessionStart() {
+        public static function btwbSessionStart()
+        {
             if (!session_id()) {
                 session_start();
             }
@@ -150,7 +171,8 @@ if (!class_exists('BTWB_Class')) {
         /**
          * Destroys the session instance created by plugin
          */
-        public static function btwbSessionDestroy() {
+        public static function btwbSessionDestroy()
+        {
             if (isset($_SESSION['btwb']['settingsPage']['notice'])) {
                 unset($_SESSION['btwb']['settingsPage']['notice']);
             }
@@ -161,7 +183,8 @@ if (!class_exists('BTWB_Class')) {
          * Adds screen option and meta box for BTWB Access settings at every Post / Page Settings page.
          * @param string $post_type post or page
          */
-        public static function btwbAccessSettingsBox($post_type) {
+        public static function btwbAccessSettingsBox($post_type)
+        {
             add_meta_box(
                     'btwb_access_settings', 'BTWB Visibility Options', 'BTWB_Class::btwbAccessSettingsBoxContent', $post_type, 'normal', 'high'
             );
@@ -171,7 +194,8 @@ if (!class_exists('BTWB_Class')) {
          * Creates HTML string which is contained in BTWB Access settings Meta Boxes
          * @param WP_Post $post The post object of the post being accessed for settings.
          */
-        public static function btwbAccessSettingsBoxContent($post) {
+        public static function btwbAccessSettingsBoxContent($post)
+        {
             $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
 
             if (!empty($btwbSettings)) {
@@ -182,14 +206,14 @@ if (!class_exists('BTWB_Class')) {
                 $scopesVisibilityClass = !empty($thisPostMetaVisibility) ? '' : 'btwb-not-visible';
                 $scopesVisibilityRadio = !empty($thisPostMetaVisibility) ? 'checked' : '';
 
-                $btwbSettingsArr = json_decode($btwbSettings);
+                $btwbSettingsObj = json_decode($btwbSettings);
                 echo '<label class="btwb-radio"><input type="radio" name="btwb_visibility" value="0" data-val="0" class="post-format btwb_visibility" checked="true">&nbsp; Unprotected (Visible to all visitors)</label>';
-                if (!empty($btwbSettingsArr->scopes)) {
+                if (!empty($btwbSettingsObj->member_lists)) {
                     echo '<label class="btwb-radio"><input ' . $scopesVisibilityRadio . ' type="radio" name="btwb_visibility" value="1" data-val="1" class="post-format btwb_visibility">&nbsp; Protected (Visible to only following groups)</label>';
                     echo '<ul class="form-no-clear ' . $scopesVisibilityClass . '" id="btwb_scopes">';
-                    foreach ($btwbSettingsArr->scopes as $k => $scope) {
+                    foreach ($btwbSettingsObj->member_lists as $k => $member_list) {
                         $checkedScope = (!empty($thisPostMetaScopes[$k]) && !empty($thisPostMetaVisibility)) ? 'checked' : '';
-                        echo '<li><label class="selectit"><input ' . $checkedScope . ' type="checkbox" name="btwb_scopes[' . $k . ']" value="' . $scope . '" class="btwb_scopes_ctrl" />&nbsp;' . $scope . '</label></li>';
+                        echo '<li><label class="selectit"><input ' . $checkedScope . ' type="checkbox" name="btwb_scopes[' . $k . ']" value="' . $member_list->name . '" class="btwb_scopes_ctrl" />&nbsp;' . $member_list->name . '</label></li>';
                     }
                     echo '</ul>';
                 }
@@ -201,27 +225,16 @@ if (!class_exists('BTWB_Class')) {
         /**
          * Saves / Updates the post specific BTWB Access settings
          */
-        public static function btwbAccessSettingsSave() {
+        public static function btwbAccessSettingsSave()
+        {
             if (isset($_POST['post_ID'])) {
                 $thisPostId = $_POST['post_ID'];
                 $thisPostBtwbVisibility = $_POST['btwb_visibility'];
                 $thisPostBtwbVisibilityScopes = $_POST['btwb_scopes'];
 
-                /* Get existing visibility settings for post, save new if not found and update the existing if found */
-                $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
-                if (!empty($thisPostMetaVisibility)) {
-                    update_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, $thisPostBtwbVisibility);
-                } else {
-                    add_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, $thisPostBtwbVisibility);
-                }
-
-                /* Get existing allowed scopes for post, save new if not found and update the existing if found */
-                $thisPostMetaScopes = get_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, true);
-                if (!empty($thisPostMetaVisibility)) {
-                    update_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
-                } else {
-                    add_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
-                }
+                /* Update visibility settings for post */
+                update_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, $thisPostBtwbVisibility);
+                update_post_meta($thisPostId, BTWB_PC_PAGE_SCOPES, $thisPostBtwbVisibilityScopes);
             }
         }
 
@@ -229,19 +242,24 @@ if (!class_exists('BTWB_Class')) {
          * Checks for every URL being accessed that whether the accessing party is authorized by BTWB or not
          * @global type $post
          */
-        public static function renderCheck() {
+        public static function renderCheck()
+        {
+            if (isset($_GET['btwb_trigger']) && $_GET['btwb_trigger'] == 'wod_shortcode_template') {
+                return;
+            }
+
             global $post;
 
             $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
             if (!empty($btwbSettings)) {
                 $btwbSettings = json_decode($btwbSettings);
             }
-            
+
             $thisPostId = null;
-            if(is_object($post)){
+            if (is_object($post)) {
                 $thisPostId = $post->ID;
             }
-            
+
             $thisPostMetaVisibility = get_post_meta($thisPostId, BTWB_PC_PAGE_VISIBILITY, true);
 
             /* Check if the 'jwt_token' is not observed in Query String */
@@ -251,7 +269,7 @@ if (!class_exists('BTWB_Class')) {
                     /* No scopes stored in cookies are found */
                     if (!self::readLocalScopes()) {
                         if (!empty($btwbSettings)) {
-                            wp_redirect($btwbSettings->jwt_endpoint . '?to=' . self::getThisUrl());
+                            wp_redirect($btwbSettings->authentication->endpoint . '?to=' . self::getThisUrl());
                         }
                         exit;
                         /* Scopes are found locally */
@@ -271,7 +289,8 @@ if (!class_exists('BTWB_Class')) {
                     $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
 
                     /* Decode the JWT Token recieved through BTWB */
-                    $dataOutOfJwt = JWT::decode($btwbJwtToken, $btwbSettings->jwt_secret, array('HS256'));
+
+                    $dataOutOfJwt = JWT::decode($btwbJwtToken, $btwbSettings->authentication->key, array($btwbSettings->authentication->algorithm));
 
 
                     /* Check if local scopes are available */
@@ -292,7 +311,8 @@ if (!class_exists('BTWB_Class')) {
          * @param integer $thisPostId ID of the post being accessed
          * @param array $scopes If passed then will override the scopes stored in cookies
          */
-        public static function userScopePermissible($thisPostId, $scopes = array()) {
+        public static function userScopePermissible($thisPostId, $scopes = array())
+        {
             $result = false;
 
             /* Get Post's scopes from options table */
@@ -310,7 +330,7 @@ if (!class_exists('BTWB_Class')) {
 
             if (!empty($localScopes)) {
                 /* The common scopes which deciedes the access for user */
-                $commonScopes = array_intersect(array_keys($thisPostMetaScopes), $localScopes);
+                $commonScopes = array_intersect(array_keys($thisPostMetaScopes), array_keys($localScopes));
                 $result = !empty($commonScopes) ? true : false;
             }
 
@@ -326,7 +346,8 @@ if (!class_exists('BTWB_Class')) {
          * Reads and return the user scopes stored in cookies.
          * @return mixed The value being read through cookies otherwise FALSE
          */
-        public static function readLocalScopes($btwbScopes = null) {
+        public static function readLocalScopes($btwbScopes = null)
+        {
             $result = false;
             $btwbSettings = json_decode(get_option(BTWB_SETTINGS_OPTION, 0));
             if (empty($btwbScopes)) {
@@ -334,11 +355,11 @@ if (!class_exists('BTWB_Class')) {
                     if (isset($_COOKIE[BTWB_COOKIE_VISITOR_JWT])) {
                         $result = $_COOKIE[BTWB_COOKIE_VISITOR_JWT];
                         if (!empty($result)) {
-                            $result = JWT::decode($result, $btwbSettings->jwt_secret, array('HS256'));
+                            $result = JWT::decode($result, $btwbSettings->authentication->key, array($btwbSettings->authentication->algorithm));
                         }
                     }
                 } catch (Exception $e) {
-                    wp_redirect($btwbSettings->jwt_endpoint . '?to=' . self::getThisUrl());
+                    wp_redirect($btwbSettings->authentication->endpoint . '?to=' . self::getThisUrl());
                     exit;
                 }
             }
@@ -349,7 +370,8 @@ if (!class_exists('BTWB_Class')) {
          * Returns the exact URL being accessed.
          * @return string URL
          */
-        public static function getThisUrl() {
+        public static function getThisUrl()
+        {
             $urlscheme = $_SERVER['REQUEST_SCHEME'] ? $_SERVER['REQUEST_SCHEME'] : 'http';
             $domain = $_SERVER['HTTP_HOST'];
             // find out the path to the current file:
@@ -361,17 +383,16 @@ if (!class_exists('BTWB_Class')) {
             return $url;
         }
 
-        public static function widgetDefaultSettingsSelect($nameKey, $savedValue, $numberOfOptions = 20) {
+        public static function widgetDefaultSettingsSelect($nameKey, $savedValue, $numberOfOptions = 20)
+        {
             echo '<select name="btwb_widgets_default_settings[' . $nameKey . ']">';
-			$counter = in_array($nameKey, array('btwb_wod_leaderboard_length', 'btwb_wod_activity_length')) ? 0 : 1;
-            while ( $counter <= $numberOfOptions ) {
+            $counter = in_array($nameKey, array('btwb_wod_leaderboard_length', 'btwb_wod_activity_length')) ? 0 : 1;
+            while ($counter <= $numberOfOptions) {
                 $selectedOption = (!empty($savedValue) && ($savedValue == $counter)) ? 'selected' : '';
                 echo "<option {$selectedOption}>{$counter}</option>";
-				$counter++;
+                $counter++;
             }
             echo '</select>';
         }
-
     }
-
 }

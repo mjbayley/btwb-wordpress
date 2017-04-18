@@ -1,3 +1,10 @@
+<?php
+	if (!defined('ABSPATH'))
+	    exit; // Exit if accessed directly
+
+	$btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
+	$btwbSettingsObj = json_decode($btwbSettings);
+?>
 <html>
 <head>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
@@ -27,19 +34,30 @@
 			</tr>
 			<tr>
 				<td style="border: none; padding: 3px 0;"><label>Track(s)</label></td>
-				<td style="border: none; padding: 3px 0;" class="col-md-6">
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="1" class="wod_track-checkbox">1</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="2" class="wod_track-checkbox">2</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="3" class="wod_track-checkbox">3</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="4" class="wod_track-checkbox">4</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="5" class="wod_track-checkbox">5</label></div>
+				<td colspan="2" style="border: none; padding: 3px 0;">
+					<select class="form-control" id="wod_tracks" multiple>
+						<?php
+							if(!empty($btwbSettingsObj->tracks)){
+								foreach($btwbSettingsObj->tracks as $btwbWodTrackId => $btwbWodTrack){
+									echo "<option value=\"{$btwbWodTrackId}\">{$btwbWodTrack->name}</option>";
+								}
+							}
+						?>
+					</select>
 				</td>
-				<td style="border: none; padding: 3px 0;" class="col-md-6">
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="6" class="wod_track-checkbox">6</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="7" class="wod_track-checkbox">7</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="8" class="wod_track-checkbox">8</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="9" class="wod_track-checkbox">9</label></div>
-					<div class="checkbox"> <label for="checkboxes-1"><input type="checkbox" name="checkboxes" value="10" class="wod_track-checkbox">10</label></div>
+			</tr>
+			<tr>
+				<td style="border: none; padding: 3px 0;"><label>Group</label></td>
+				<td colspan="2" style="border: none; padding: 3px 0;">
+					<select class="form-control" id="wod_group">
+						<?php
+							if(!empty($btwbSettingsObj->member_lists)){
+								foreach($btwbSettingsObj->member_lists as $btwbMemberListId => $btwbMemberList){
+									echo "<option value=\"{$btwbMemberListId}\">{$btwbMemberList->name}</option>";
+								}
+							}
+						?>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -83,6 +101,13 @@
 							}
 						?>
 					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" style="border: none; padding: 3px 0;">
+					<input type="checkbox" name="" id="wod_privacy" class="btwb-margin-top-15" value="1" />
+					<label>Include results with "Gym/Coaching only" privacy level?</label>
+					<p>(Only select this if you are putting this on a protected page)</p>
 				</td>
 			</tr>
 		</table>

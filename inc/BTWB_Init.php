@@ -44,6 +44,9 @@ add_action('save_post', 'BTWB_Class::btwbAccessSettingsSave');
 /* Filter the user access to the URL being accessed */
 add_action('template_redirect', 'BTWB_Class::renderCheck');
 
+/* Adds admin scripts */
+add_action('admin_enqueue_scripts', array('BTWB_Class', 'btwbAdminEnqueueScripts'));
+
 /* Registers the TinyMCE plugin */
 add_filter('mce_external_plugins', 'BTWB_Widgets_Class::tinyMceShortcodeBtns_register');
 
@@ -58,3 +61,9 @@ add_shortcode('wod', 'BTWB_Widgets_Class::wodShortcode');
 add_shortcode('activity', 'BTWB_Widgets_Class::activityShortcode');
 add_shortcode('leaderboard', 'BTWB_Widgets_Class::leaderboardShortcode');
 add_shortcode('stripecheckout', 'BTWB_Widgets_Class::stripeShortcode');
+
+/* Template Redirect for fetching HTML for WOD shortcode generation popup */
+add_action( 'template_redirect', 'BTWB_Widgets_Class::wodShortcodePopupHtml' );
+
+/* AJAX endpoint o send the member list options for popups */
+add_action( 'wp_ajax_get_member_lists', 'BTWB_Widgets_Class::btwbGetMemberLists' );

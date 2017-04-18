@@ -17,7 +17,7 @@ jQuery(document).ready(function () {
                 elem.val(str);
                 elem.height(elem.scrollHeight);
                 elem.css({"border-color": "#5b9dd9", "border-shadow": "0 0 2px #5b9dd9"});
-                jQuery('#btwb_json-description').text('The JSON must contain the required configuration values at keys endpoint_url, jwt_secret and scopes').css('color', '#666').show();
+                jQuery('#btwb_json-description').text('The JSON must contain the required configuration values at keys endpoint_url, authentication and member_lists').css('color', '#666').show();
                 jQuery('#submit_btwb_json').prop('disabled', false);
             } catch (e) {
                 jQuery('#btwb_json-description').text('The JSON string is Invalid').css('color', '#d9534f').show();

@@ -32,9 +32,11 @@ $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
                                   <td colspan="2" style="border: none; padding: 3px 0;">
                                       <select class="form-control" id="btwb_stripe_program" placeholder="Select Program">
                                           <?php
-                                            foreach ($btwbSettings->coaching_program_plans as $btwbCoachingKey => $btwbCoachingProgram) {
-                                              echo "<option value=\"{$btwbCoachingKey}\">{$btwbCoachingProgram->name}</option>";
-                                            }
+                                              if(!empty($btwbSettings->coaching_program_plans)){
+                                                  foreach($btwbSettings->coaching_program_plans as $btwbWodCoachingProgramId => $btwbWodCoachingProgram){
+                                                      echo "<option value=\"{$btwbWodCoachingProgramId}\">{$btwbWodCoachingProgram->name}</option>";
+                                                  }
+                                              }
                                           ?>
                                       </select>
                                   </td>
