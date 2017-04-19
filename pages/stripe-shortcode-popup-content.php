@@ -4,8 +4,8 @@ $btwb_this_location = str_replace('\\', '/', getcwd());
 $wp_root_url = str_replace('/wp-content/plugins/btwb-wordpress/pages', '/', $btwb_this_location);
 $btwb_plugin_root_url = str_replace('/pages', '/', $btwb_this_location);
 
-include_once $wp_root_url.'wp-load.php';
-include_once $btwb_plugin_root_url.'btwb-wordpress.php';
+include_once '../../../../wp-load.php';
+include_once '../btwb-wordpress.php';
 
 $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
 ?>
@@ -19,9 +19,9 @@ $btwbSettings = get_option(BTWB_SETTINGS_OPTION, 0);
                 <div class="col-md-10 col-md-offset-1">
                   <?php
                     $btwbSettings = json_decode($btwbSettings);
-                    if($btwbSettings === 0 or !isset($btwbSettings->coaching_program_plans) or count($btwbSettings->coaching_program_plans) == 0){
+                    if($btwbSettings === 0 or !isset($btwbSettings->coaching_program_plans) or count(get_object_vars($btwbSettings->coaching_program_plans)) == 0){
                       echo '<div class="alert alert-warning" style="margin-top:20px;">
-                        You do not have any coaching programs available for purchanse. If this is incorrect, please update your JSON config code with the latest version. Thanks!
+                        You do not have any coaching programs available for purchase. If this is incorrect, please update your JSON config code with the latest version. Thanks!
                       </div>';
                     } else {
                    ?>
