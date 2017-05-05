@@ -248,7 +248,7 @@ if (!class_exists('BTWB_Widgets_Class')) {
             if (!empty($btwbDefaultSettings)) {
                 if (!empty($attributeRelations)) {
                     foreach ($attributeRelations as $attributeRKey => $attributeRelation) {
-                        if (!isset($attributes[$attributeRelation]) && !empty($btwbDefaultSettings[$attributeRKey])) {
+                        if (!isset($attributes[$attributeRelation]) && isset($btwbDefaultSettings[$attributeRKey])) {
                             $attributes[$attributeRelation] = is_array($btwbDefaultSettings[$attributeRKey]) ? implode(',', $btwbDefaultSettings[$attributeRKey]) : $btwbDefaultSettings[$attributeRKey];
                         }
                     }
