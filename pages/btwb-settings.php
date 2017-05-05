@@ -94,7 +94,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 </tbody>
             </table>
             <hr />
-            <h1 class="btwb-margin-top-25">Leadership Shortcode [leaderboard]</h1>
+            <h1 class="btwb-margin-top-25">Leaderboard Shortcode [leaderboard]</h1>
             <p>Default Settings for the [leaderboard] shortcode.</p>
             <table class="form-table">
                 <tbody>

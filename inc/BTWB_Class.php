@@ -330,7 +330,7 @@ if (!class_exists('BTWB_Class')) {
 
             if (!empty($localScopes)) {
                 /* The common scopes which deciedes the access for user */
-                $commonScopes = array_intersect(array_keys($thisPostMetaScopes), array_keys($localScopes));
+                $commonScopes = array_intersect(array_keys($thisPostMetaScopes), $localScopes);
                 $result = !empty($commonScopes) ? true : false;
             }
 
