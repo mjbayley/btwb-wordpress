@@ -301,7 +301,7 @@ if (!class_exists('BTWB_Class')) {
                     }
                     // Exception occurred while decoding the JWT Token
                 } catch (Exception $e) {
-                    wp_die('You are not authorized to access this page', 'Authorization Failure');
+                    wp_die('You are not authorized to access this page', 'Authorization Failure', array( 'response'=> 401 ));
                 }
             }
         }
@@ -338,7 +338,7 @@ if (!class_exists('BTWB_Class')) {
                 foreach ($thisPostMetaScopes as $thisScope) {
                     $scopesString = '<li>' . $thisScope . '</li>';
                 }
-                wp_die('<p>You are not authorized to access this page as you do not belong to the following BTWB scope(s):</p><ul>' . $scopesString . '</ul>', 'Authorization Failure');
+                wp_die('<p>You are not authorized to access this page as you do not belong to the following BTWB scope(s):</p><ul>' . $scopesString . '</ul>', 'Authorization Failure', array( 'response'=> 401 ));
             }
         }
 
