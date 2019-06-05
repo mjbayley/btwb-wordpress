@@ -65,7 +65,7 @@ if (!defined('BTWB_CDN_WIDGETS_CSS_URL')) {
 
 /* Font Awesome CSS URL */
 if (!defined('BOOTSTRAP_CDN_FONT_AWESOME_URL')) {
-    define('BOOTSTRAP_CDN_FONT_AWESOME_URL', 'http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+    define('BOOTSTRAP_CDN_FONT_AWESOME_URL', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 }
 
 /* BTWB Widgets Class Name */
